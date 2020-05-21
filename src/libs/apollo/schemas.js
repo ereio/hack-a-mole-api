@@ -24,5 +24,5 @@ const linkSchema = gql`
 export default [
   linkSchema,
   authSchema,
-  gameSchema, 
+  gameSchema,
 ];
