@@ -6,8 +6,8 @@
   "license": "MIT",
   "scripts": {
     "start": "nodemon --watch src --exec 'yarn local'",
-    "local": "npm run build && NODE_PATH=src/ node -r @babel/register -r dotenv/config build dotenv_config_path=.env.local",
-    "build": "npm run clean && npm run build-babel",
+    "local": "yarn build && NODE_PATH=src/ node -r @babel/register -r dotenv/config build dotenv_config_path=.env",
+    "build": "yarn clean && yarn build-babel",
     "build-babel": "./node_modules/.bin/babel ./src -d ./build -s",
     "clean": "rm -rf build && mkdir build",
     "init-eslint": "eslint --init"
@@ -16,16 +16,20 @@
     "@babel/cli": "^7.8.4",
     "@babel/core": "^7.9.6",
     "@babel/polyfill": "^7.8.7",
+    "@babel/preset-env": "^7.9.6",
     "@babel/register": "^7.9.0",
     "apollo-server": "^2.13.1",
     "apollo-server-express": "^2.13.1",
+    "body-parser": "^1.19.0",
+    "cors": "^2.8.5",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
     "firebase-admin": "^8.12.1",
     "graphql": "^15.0.0",
     "graphql-iso-date": "^3.6.1",
     "graphql-resolvers": "^0.4.2",
-    "graphql-subscriptions": "^1.1.0"
+    "graphql-subscriptions": "^1.1.0",
+    "helmet": "^3.22.0"
   },
   "devDependencies": {
     "eslint": "^7.0.0",

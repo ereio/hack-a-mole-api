@@ -2,8 +2,8 @@ import { gql } from 'apollo-server-express';
 
 export default gql`
     extend type Mutation {
-      signupUser(newUser: UserInput!): User!
-      loginUser(email:String!, password:String!): User!
+      signupUser(newUser: AuthUserInput!): AuthUser!
+      loginUser(email:String!, password:String!): AuthUser!
     }
 
     input AuthUserInput {
