@@ -29,7 +29,8 @@
     "graphql-iso-date": "^3.6.1",
     "graphql-resolvers": "^0.4.2",
     "graphql-subscriptions": "^1.1.0",
-    "helmet": "^3.22.0"
+    "helmet": "^3.22.0",
+    "sequelize": "^5.21.11"
   },
   "devDependencies": {
     "eslint": "^7.0.0",
