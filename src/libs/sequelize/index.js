@@ -2,12 +2,11 @@ import Sequelize from 'sequelize';
 
 const url = require('url');
 
-const dbUrl = url.parse(process.env.DATABASE_URL);
-const username = dbUrl.auth.substr(0, dbUrl.auth.indexOf(':'));
-const password = dbUrl.auth.substr(dbUrl.auth.indexOf(':') + 1,
-  dbUrl.auth.length);
-const host = dbUrl.hostname;
-const database = dbUrl.path.slice(1);
+const databaseUrl = url.parse(process.env.DATABASE_URL);
+const host = databaseUrl.hostname;
+const database = databaseUrl.path.slice(1);
+const username = databaseUrl.auth.substr(0, databaseUrl.auth.indexOf(':'));
+const password = databaseUrl.auth.substr(databaseUrl.auth.indexOf(':') + 1, databaseUrl.auth.length);
 
 const { Op } = Sequelize;
 
@@ -49,19 +48,19 @@ const operatorsAliases = {
 };
 
 const config = {
-  username,
-  password,
-  database,
   host,
   dialect: 'postgres',
-  ssl: process.env.DATABASE_SSL,
+  database,
+  username,
+  password,
+  ssl: false, // TODO:
   logging: false,
   pool: {
     max: Number(process.env.DB_POOL_SIZE),
     idle: Number(process.env.DB_TIMEOUT),
     acquire: Number(90000),
   },
-  dialectOptions: { ssl: process.env.DATABASE_SSL },
+  dialectOptions: { ssl: false }, // TODO:
   operatorsAliases,
 };
 
