@@ -8,11 +8,12 @@ export default gql`
       signupUser(email: String!, password: String!, username: String!): User!
     }
 
-    # extend type Query {
-    #   user(id: ID!): User
-    #   searchUsers(username: String): [User]
-    #   checkAvailableUsername(username: String): Boolean!
-    # }
+    extend type Query {
+      user(id: ID!): User
+      searchUsers(username: String): [User]
+      checkAvailableEmail(email: String): Boolean!
+      checkAvailableUsername(username: String): Boolean!
+    }
 
     type User {
       id: ID!
