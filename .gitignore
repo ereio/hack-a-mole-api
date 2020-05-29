@@ -78,3 +78,5 @@ typings/
 
 # macOS
 .DS_Store
+
+google-service-account*

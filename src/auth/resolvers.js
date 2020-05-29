@@ -1,12 +1,28 @@
 
 import { skip } from 'graphql-resolvers';
 import { ForbiddenError } from 'apollo-server';
+import bcrypt from 'bcrypt';
+import { v4 as uuidv4 } from 'uuid';
 
 import {
   firebaseAdmin,
 } from '../libs/firebase';
 
 const NOT_AUTHENTICATED_ERROR = 'Not Authenticated';
+
+export const verifyIdToken = async (token) => {
+  if (!token || token === 'undefined') { // lol
+    return false;
+  }
+
+  try {
+    return await firebaseAdmin.auth().verifyIdToken(token);
+  } catch (error) {
+    console.error('[verifyIdToken]', error);
+    return false;
+  }
+};
+
 
 export const isAuthenticated = () => async (parent, args, { user }) => {
   if (!user) {
@@ -16,36 +32,80 @@ export const isAuthenticated = () => async (parent, args, { user }) => {
   return skip;
 };
 
+
 /**
  * Create a user
  */
-export const createAuthUser = async (
+export const loginUser = async (
   parent,
-  { email, password, displayName },
+  { email, password },
+  { models },
 ) => {
-  let authUser = false;
-
   try {
-    // create auth user for logins
-    authUser = await firebaseAdmin.auth().createUser({
-      email,
-      password,
-      displayName,
-    });
+    const auth = await models.Auths.findOne({ where: { email }, raw: true });
+    const match = await bcrypt.compare(password, auth.passwordHash);
+
+    if (!match) {
+      throw Error('Failed to login. Bad email or password provided');
+    }
+
+    const token = await firebaseAdmin.auth().createCustomToken(email);
+
+    const authUser = {
+      id: auth.id,
+      email: auth.email,
+      token,
+    };
+
+    console.log(authUser);
+
+    return authUser;
   } catch (error) {
     // eslint-disable-next-line
-    console.error('[Create Client Auth User] error', error);
-    throw error;
+    console.error('[Create Client Auth User] error', error); 
+    return null;
   }
-  return authUser;
+};
+
+
+/**
+ * Create a user
+ */
+export const signupUser = async (
+  parent,
+  { email, password, displayName },
+  { models, user },
+) => {
+  if (user) {
+    throw Error('Signed in users cannot create new accounts');
+  }
+
+  const hash = await bcrypt.hash(password, 14);
+  if (!hash) {
+    throw Error('Could not create account, please try again');
+  }
+
+  const newAuth = await models.Auths.create({
+    id: uuidv4(),
+    username: displayName,
+    email,
+    passwordHash: hash,
+  });
+
+  await models.Users.create({
+    id: uuidv4(),
+    authId: newAuth.id,
+  });
+
+  return true;
 };
 
 /**
  * Create a user
  */
-export const updateAuthUserPassword = async (parent, { uid, password }) => {
+export const signOut = async (parent, { token }, { models }) => {
   try {
-    await firebaseAdmin.auth().updateUser(uid, { password });
+    await firebaseAdmin.auth().revokeRefreshTokens(token);
     return true;
   } catch (error) {
     // eslint-disable-next-line

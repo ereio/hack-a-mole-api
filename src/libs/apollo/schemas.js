@@ -1,8 +1,8 @@
 import { gql } from 'apollo-server-express';
 
 import authSchema from '../../auth/schema';
-import gameSchema from '../../games/schema';
 import usersSchema from '../../users/schema';
+import gameSchema from '../../games/schema';
 
 
 // Allow datetimes
@@ -25,6 +25,6 @@ const linkSchema = gql`
 export default [
   linkSchema,
   usersSchema,
-  //   authSchema, // TODO:
+  authSchema,
   //   gameSchema, // TODO:
 ];

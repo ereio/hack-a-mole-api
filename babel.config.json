@@ -9,5 +9,8 @@
         "proposals": true
       }
     }
-  ]]
+  ]],
+  "plugins": [
+    ["inline-json-import", {}]
+  ]
 }

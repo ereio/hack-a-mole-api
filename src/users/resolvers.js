@@ -1,87 +1,65 @@
+import { combineResolvers } from 'graphql-resolvers';
+import * as EmailValidator from 'email-validator';
+import { isAuthenticated } from '../auth/resolvers';
 /**
- * Login User
+ * Search Users (by username)
+ */
+export const userUnsafe = async (parent, { id, authId }, { models }) => {
+  if (authId) {
+    return models.Users.findOne({ where: { authId } });
+  }
+  return models.Users.findByPk(id);
+};
+
+/**
+ * Search Users (by username)
+ */
+export const searchUsersUnsafe = async (parent, { username }, { models }) => {
+  try {
+    return await models.Users.findAll({ where: { $iLike: username }, raw: true });
+  } catch (error) {
+    console.log('[searchUsers]', error);
+    return [];
+  }
+};
+
+
+/**
+ * Check Available Email
  */
 export const checkAvailableEmail = async (parent, { email }, { models }) => {
-  console.log('[checkAvailableEmail]', email, models);
-  return false;
+  try {
+    if (!EmailValidator.validate(email)) {
+      throw Error('Not a valid email address');
+    }
+
+    const match = await models.Auths.findOne({ where: { email }, raw: true });
+    console.log('[checkAvailableEmail]', !match);
+    return !match;
+  } catch (error) {
+    console.log('[checkAvailableEmail]', error);
+    return false;
+  }
 };
 
+/**
+ * Check Available Username
+ */
 export const checkAvailableUsername = async (parent, { username }, { models }) => {
-  console.log('[checkAvailableUsername]', username, models);
-  return true;
+  try {
+    if (!username || username.length < 6) {
+      throw Error('Not a valid username, must be at least 6 characters');
+    }
+
+    const match = await models.Users.findOne({ where: { username }, raw: true });
+    console.log('[checkAvailableUsername]', !match);
+    return !match;
+  } catch (error) {
+    console.log('[checkAvailableUsername]', error);
+    return false;
+  }
 };
 
-/**
- * Login User
- */
-export const loginUser = async (parent,
-  {
-    email, password,
-  },
-  { models },
-) => {
-  console.log(email, password, models);
 
-  // firebase.auth().signInWithEmailAndPassword(email, password)
-  //     .then(({user}) => {
-  //         dispatch({
-  //             type: LOGIN_SUCCESS,
-  //             isAuthenticated: !!user,
-  //             user
-  //         })
-  //     })
-  //     .catch((error) => {
-  //         dispatch({
-  //             type: LOGIN_FAILURE,
-  //             error: error.message
-  //         })
-  //     });
-};
-
-/**
- * Signup User
- */
-export const signupUser = async (
-  parent,
-  {
-    email, password, username,
-  },
-  { models },
-) => {
-  console.log(email, password, username, models);
-  // firebase.auth().createUserWithEmailAndPassword(email, password)
-  //     .then((response) => {
-  //         console.log("CREATE RESPONSE", response);
-  //         dispatch({
-  //             type: CREATE_USER_SUCCESS
-  //         })
-  //     })
-  //     .catch((error) => {
-  //         dispatch({
-  //             type: CREATE_USER_FAILURE,
-  //             error: error.message
-  //         })
-  //     });
-};
-
-export const logoutUser = async (
-  parent,
-  {
-    email, password, username,
-  },
-  { models },
-) => {
-  console.log(email, password, username, models);
-  // firebase.auth().signOut()
-  //     .then(() => {
-  //         dispatch({
-  //             type: LOGOUT_SUCCESS
-  //         })
-  //     })
-  //     .catch((error) => {
-  //         dispatch({
-  //             type: LOGOUT_FAILURE,
-  //             error: error.message
-  //         })
-  //     })
-};
+export const user = combineResolvers(isAuthenticated, userUnsafe);
+export const searchUsers = combineResolvers(isAuthenticated, searchUsersUnsafe);
