@@ -5,6 +5,7 @@ import { isAuthenticated } from '../auth/resolvers';
  * Search Users (by username)
  */
 export const userUnsafe = async (parent, { id, authId }, { models }) => {
+  console.log('[userUnsafe]', { id, authId });
   if (authId) {
     return models.Users.findOne({ where: { authId } });
   }

@@ -11,14 +11,15 @@ import {
 const NOT_AUTHENTICATED_ERROR = 'Not Authenticated';
 
 export const verifyIdToken = async (token) => {
-  if (!token || token === 'undefined') { // lol
+  if (!token || token === 'undefined' || token === 'null') { // lol
     return false;
   }
 
   try {
+    console.log('[verifyIdToken]', token);
     return await firebaseAdmin.auth().verifyIdToken(token);
   } catch (error) {
-    console.error('[verifyIdToken]', error);
+    console.error('[verifyIdToken]', error.message);
     return false;
   }
 };
@@ -41,30 +42,31 @@ export const loginUser = async (
   { email, password },
   { models },
 ) => {
-  try {
-    const auth = await models.Auths.findOne({ where: { email }, raw: true });
-    const match = await bcrypt.compare(password, auth.passwordHash);
+  const auth = await models.Auths.findOne({ where: { email }, raw: true });
 
-    if (!match) {
-      throw Error('Failed to login. Bad email or password provided');
-    }
-
-    const token = await firebaseAdmin.auth().createCustomToken(email);
-
-    const authUser = {
-      id: auth.id,
-      email: auth.email,
-      token,
-    };
-
-    console.log(authUser);
-
-    return authUser;
-  } catch (error) {
-    // eslint-disable-next-line
-    console.error('[Create Client Auth User] error', error); 
-    return null;
+  console.log('[loginUser]', auth);
+  if (!auth) {
+    throw Error('Failed to login. Bad email or password provided');
   }
+
+  const match = await bcrypt.compare(password, auth.passwordHash);
+
+  console.log('[loginUser]', match);
+  if (!match) {
+    throw Error('Failed to login. Bad email or password provided');
+  }
+
+  const token = await firebaseAdmin.auth().createCustomToken(email);
+
+  const authUser = {
+    id: auth.id,
+    email: auth.email,
+    token,
+  };
+
+  console.log({ id: auth.id, email: auth.email, token: 'token aquired' });
+
+  return authUser;
 };
 
 
@@ -73,29 +75,35 @@ export const loginUser = async (
  */
 export const signupUser = async (
   parent,
-  { email, password, displayName },
+  { email, password, username },
   { models, user },
 ) => {
+  console.log('[createUser]', { email, password, username });
   if (user) {
     throw Error('Signed in users cannot create new accounts');
   }
 
   const hash = await bcrypt.hash(password, 14);
+
   if (!hash) {
     throw Error('Could not create account, please try again');
   }
 
   const newAuth = await models.Auths.create({
     id: uuidv4(),
-    username: displayName,
+    username,
     email,
     passwordHash: hash,
   });
+
+  console.log('[createUser]', newAuth);
 
   await models.Users.create({
     id: uuidv4(),
     authId: newAuth.id,
   });
+
+  console.log('[createUser]', username);
 
   return true;
 };
