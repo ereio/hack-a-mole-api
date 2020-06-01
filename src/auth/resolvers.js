@@ -16,7 +16,6 @@ export const verifyIdToken = async (token) => {
   }
 
   try {
-    console.log('[verifyIdToken]', token);
     return await firebaseAdmin.auth().verifyIdToken(token);
   } catch (error) {
     console.error('[verifyIdToken]', error.message);
@@ -26,6 +25,7 @@ export const verifyIdToken = async (token) => {
 
 
 export const isAuthenticated = () => async (parent, args, { user }) => {
+  console.log('[isAuthenticated]', user);
   if (!user) {
     throw new ForbiddenError(NOT_AUTHENTICATED_ERROR);
   }
@@ -56,7 +56,7 @@ export const loginUser = async (
     throw Error('Failed to login. Bad email or password provided');
   }
 
-  const token = await firebaseAdmin.auth().createCustomToken(email);
+  const token = await firebaseAdmin.auth().createCustomToken(auth.id);
 
   const authUser = {
     id: auth.id,
@@ -64,7 +64,11 @@ export const loginUser = async (
     token,
   };
 
-  console.log({ id: auth.id, email: auth.email, token: 'token aquired' });
+  console.log({
+    id: auth.id,
+    email: auth.email,
+    token: '[token redacted]',
+  });
 
   return authUser;
 };
@@ -101,6 +105,7 @@ export const signupUser = async (
   await models.Users.create({
     id: uuidv4(),
     authId: newAuth.id,
+    username,
   });
 
   console.log('[createUser]', username);
@@ -111,9 +116,9 @@ export const signupUser = async (
 /**
  * Create a user
  */
-export const signOut = async (parent, { token }, { models }) => {
+export const signOut = async (parent, params, { user }) => {
   try {
-    await firebaseAdmin.auth().revokeRefreshTokens(token);
+    await firebaseAdmin.auth().revokeRefreshTokens(user.token);
     return true;
   } catch (error) {
     // eslint-disable-next-line

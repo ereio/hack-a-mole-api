@@ -18,13 +18,11 @@ const users = (sequelize, DataTypes) => {
       },
       username: {
         type: DataTypes.TEXT,
-        primaryKey: false,
         allowNull: true,
         field: 'username',
       },
       gameIds: {
         type: DataTypes.TEXT,
-        primaryKey: false,
         allowNull: true,
         field: 'game_ids',
       },

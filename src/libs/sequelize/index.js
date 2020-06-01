@@ -74,6 +74,8 @@ const models = {
   Auths: sequelize.import('../../auth/model'),
   Users: sequelize.import('../../users/model'),
   Games: sequelize.import('../../games/model'),
+  Whacks: sequelize.import('../../games/whacks/model'),
+  Spawns: sequelize.import('../../games/spawns/model'),
 };
 
 

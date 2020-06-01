@@ -11,7 +11,22 @@ import {
   signupUser,
 } from '../../auth/resolvers';
 
+import {
+  createGame,
+  updateGame,
+  __resolveTypeEvent,
+} from '../../games/resolvers';
+
+import {
+  saveMoleSpawn,
+} from '../../games/spawns/resolvers';
+
+import {
+  saveMoleWhack,
+} from '../../games/whacks/resolvers';
+
 export default {
+  Event: { __resolveType: __resolveTypeEvent },
   Query: {
     user,
     searchUsers,
@@ -21,5 +36,9 @@ export default {
   Mutation: {
     loginUser,
     signupUser,
+    createGame,
+    updateGame,
+    saveMoleSpawn,
+    saveMoleWhack,
   },
 };

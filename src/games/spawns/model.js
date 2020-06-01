@@ -1,31 +1,31 @@
-const games = (sequelize, DataTypes) => {
-  const Game = sequelize.define('game',
+const spawns = (sequelize, DataTypes) => {
+  const Spawn = sequelize.define('spawn',
     {
       id: {
         type: DataTypes.TEXT,
         primaryKey: true,
         allowNull: false,
       },
-      userId: {
+      gameId: {
         type: DataTypes.TEXT,
         allowNull: false,
-        field: 'user_id',
+        field: 'game_id',
       },
-      score: {
+      moleId: {
         type: DataTypes.TEXT,
-        primaryKey: true,
         allowNull: false,
-        field: 'score',
+        field: 'mole_id',
       },
-      endTime: {
-        type: DataTypes.DATE,
-        default: new Date().toUTCString(),
-        field: 'end_time',
+      cell: {
+        type: DataTypes.TEXT,
+        allowNull: false,
+        field: 'cell',
       },
-      startTime: {
-        type: DataTypes.DATE,
-        default: new Date().toUTCString(),
-        field: 'start_time',
+      despawn: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+        field: 'despawn',
+        default: false,
       },
       createdAt: {
         type: DataTypes.DATE,
@@ -46,7 +46,7 @@ const games = (sequelize, DataTypes) => {
         },
       ],
     });
-  return Game;
+  return Spawn;
 };
 
-export default games;
+export default spawns;

@@ -4,12 +4,13 @@ import { isAuthenticated } from '../auth/resolvers';
 /**
  * Search Users (by username)
  */
-export const userUnsafe = async (parent, { id, authId }, { models }) => {
-  console.log('[userUnsafe]', { id, authId });
-  if (authId) {
-    return models.Users.findOne({ where: { authId } });
+export const userUnsafe = async (parent, { authId }, { models }) => {
+  console.log('[userUnsafe]', { authId });
+  if (!authId) {
+    return null;
   }
-  return models.Users.findByPk(id);
+
+  return models.Users.findOne({ where: { authId } });
 };
 
 /**
@@ -61,6 +62,20 @@ export const checkAvailableUsername = async (parent, { username }, { models }) =
   }
 };
 
+/**
+ * Update Games Unsafe
+ */
+export const updateUserGamesUnsafe = async (parent, { username }, { models }) => {
+  try {
+    return true;
+  } catch (error) {
+    console.log('[updateGamesUnsafe]', error);
+    return false;
+  }
+};
 
-export const user = combineResolvers(isAuthenticated, userUnsafe);
+
+// export const user = combineResolvers(isAuthenticated, userUnsafe);
+export const user = userUnsafe;
+export const updateUserGames = updateUserGamesUnsafe;
 export const searchUsers = combineResolvers(isAuthenticated, searchUsersUnsafe);

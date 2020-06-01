@@ -3,6 +3,8 @@ import { gql } from 'apollo-server-express';
 import authSchema from '../../auth/schema';
 import usersSchema from '../../users/schema';
 import gameSchema from '../../games/schema';
+import whacksSchema from '../../games/whacks/schema';
+import spawnsSchema from '../../games/spawns/schema';
 
 
 // Allow datetimes
@@ -26,5 +28,7 @@ export default [
   linkSchema,
   usersSchema,
   authSchema,
-  //   gameSchema, // TODO:
+  gameSchema,
+  whacksSchema,
+  spawnsSchema,
 ];
