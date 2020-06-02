@@ -75,7 +75,6 @@ export const updateUserGamesUnsafe = async (parent, { username }, { models }) =>
 };
 
 
-// export const user = combineResolvers(isAuthenticated, userUnsafe);
-export const user = userUnsafe;
 export const updateUserGames = updateUserGamesUnsafe;
+export const user = combineResolvers(isAuthenticated, userUnsafe);
 export const searchUsers = combineResolvers(isAuthenticated, searchUsersUnsafe);

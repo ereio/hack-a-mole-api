@@ -13,7 +13,7 @@ const whacks = (sequelize, DataTypes) => {
       },
       moleId: {
         type: DataTypes.TEXT,
-        allowNull: false,
+        allowNull: true, // can be null because may have missed
         field: 'mole_id',
       },
       cell: {
@@ -25,7 +25,7 @@ const whacks = (sequelize, DataTypes) => {
         type: DataTypes.BOOLEAN,
         allowNull: false,
         field: 'hit',
-        default: false,
+        default: false, // can be false because may have missed
       },
       createdAt: {
         type: DataTypes.DATE,

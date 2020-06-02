@@ -6,6 +6,7 @@ export default gql`
     extend type Query {
       # game(id: ID): Game
       games(userId: ID): [Game]
+      gameplay(gameId: ID): [Event]
     }
 
     extend type Mutation {
@@ -19,8 +20,7 @@ export default gql`
       score: Float
       endTime: DateTime
       startTime: DateTime
-      # timeline: [Event]
-    }
+    } 
 
     # type Timeline {
     #   gameId: ID!

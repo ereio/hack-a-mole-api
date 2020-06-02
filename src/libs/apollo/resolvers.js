@@ -12,6 +12,7 @@ import {
 } from '../../auth/resolvers';
 
 import {
+  games,
   createGame,
   updateGame,
   __resolveTypeEvent,
@@ -29,6 +30,7 @@ export default {
   Event: { __resolveType: __resolveTypeEvent },
   Query: {
     user,
+    games,
     searchUsers,
     checkAvailableEmail,
     checkAvailableUsername,

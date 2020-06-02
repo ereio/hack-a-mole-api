@@ -21,8 +21,8 @@ export default gql`
 
     input WhackInput {
       gameId: String!
-      moleId: String!
       cell: String!
+      moleId: String
       hit: Boolean
       timestamp: DateTime!
     }  

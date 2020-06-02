@@ -17,12 +17,15 @@ export const __resolveTypeEvent = (event) => {
 
 const gamesUnsafe = async (
   parent,
-  { userId },
-  { models },
+  args,
+  { models, user },
 ) => {
-  console.log(userId);
+  const currentUser = await models.Users.findOne(
+    { where: { authId: user.uid }, raw: true },
+  );
+
   return models.Games.findAll({
-    where: { userId },
+    where: { userId: currentUser.id },
   });
 };
 
@@ -37,13 +40,22 @@ const createGameUnsafe = async (
 
   console.log('[createGameUnsafe]', user.uid, score, startTime, endTime, models);
 
-  return models.Games.create({
-    id: uuidv4(),
-    userId: user.uid,
+
+  const currentUser = await models.Users.findOne(
+    { where: { authId: user.uid }, raw: true },
+  );
+
+  const newGameId = uuidv4();
+
+  await models.Games.create({
+    id: newGameId,
+    userId: currentUser.id,
     score: 0,
     endTime,
     startTime,
   });
+
+  return models.Games.findByPk(newGameId);
 };
 
 const updateGameUnsafe = async (

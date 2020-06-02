@@ -24,7 +24,7 @@ export const verifyIdToken = async (token) => {
 };
 
 
-export const isAuthenticated = () => async (parent, args, { user }) => {
+export const isAuthenticated = async (parent, args, { user }) => {
   console.log('[isAuthenticated]', user);
   if (!user) {
     throw new ForbiddenError(NOT_AUTHENTICATED_ERROR);
