@@ -27,6 +27,11 @@ const whacks = (sequelize, DataTypes) => {
         field: 'hit',
         default: false, // can be false because may have missed
       },
+      timestamp: {
+        type: DataTypes.DATE,
+        default: new Date().toUTCString(),
+        field: 'timestamp',
+      },
       createdAt: {
         type: DataTypes.DATE,
         default: new Date().toUTCString(),

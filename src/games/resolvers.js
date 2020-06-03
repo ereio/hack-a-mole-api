@@ -9,9 +9,11 @@ import {
 // eslint-disable-next-line
 export const __resolveTypeEvent = (event) => {
   // eslint-disable-next-line
-  const type = event._modelOptions.name.singular;
+  console.log('HELP ME PLEASE ', event, event.hit != null, event.despawn != null);
 
-  return type.charAt(0).toUpperCase() + type.slice(1);
+  const type = event.hit !== undefined && event.hit !== null ? 'Whack' : 'Spawn';
+
+  return type;
 };
 
 
@@ -27,6 +29,24 @@ const gamesUnsafe = async (
   return models.Games.findAll({
     where: { userId: currentUser.id },
   });
+};
+
+const gameplayUnsafe = async (
+  parent,
+  { gameId },
+  { models },
+) => {
+  console.log('[gameplayUnsafe]', gameId);
+
+  const spawns = await models.Spawns.findAll({
+    where: { gameId }, raw: true,
+  });
+  const whacks = await models.Whacks.findAll({
+    where: { gameId }, raw: true,
+  });
+  const events = [...spawns, ...whacks];
+
+  return events;
 };
 
 const createGameUnsafe = async (
@@ -79,5 +99,6 @@ const updateGameUnsafe = async (
 
 
 export const games = combineResolvers(isAuthenticated, gamesUnsafe);
+export const gameplay = combineResolvers(isAuthenticated, gameplayUnsafe);
 export const createGame = combineResolvers(isAuthenticated, createGameUnsafe);
 export const updateGame = combineResolvers(isAuthenticated, updateGameUnsafe);

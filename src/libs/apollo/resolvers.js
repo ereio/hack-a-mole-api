@@ -13,6 +13,7 @@ import {
 
 import {
   games,
+  gameplay,
   createGame,
   updateGame,
   __resolveTypeEvent,
@@ -31,6 +32,7 @@ export default {
   Query: {
     user,
     games,
+    gameplay,
     searchUsers,
     checkAvailableEmail,
     checkAvailableUsername,

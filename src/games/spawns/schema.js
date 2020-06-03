@@ -12,7 +12,8 @@ export default gql`
  
     type Spawn {
       id: ID!
-      moleId: String!
+      gameId: String!
+      moleId: String
       cell: String!
       despawn: Boolean!
       timestamp: DateTime!

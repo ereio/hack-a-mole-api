@@ -4,7 +4,6 @@ export default gql`
     union Event = Whack | Spawn 
 
     extend type Query {
-      # game(id: ID): Game
       games(userId: ID): [Game]
       gameplay(gameId: ID): [Event]
     }
@@ -20,12 +19,7 @@ export default gql`
       score: Float
       endTime: DateTime
       startTime: DateTime
-    } 
-
-    # type Timeline {
-    #   gameId: ID!
-    #   events: [Event]
-    # }
+    }  
 
     input GameInput {
       id: ID

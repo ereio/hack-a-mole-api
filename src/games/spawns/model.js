@@ -27,6 +27,11 @@ const spawns = (sequelize, DataTypes) => {
         field: 'despawn',
         default: false,
       },
+      timestamp: {
+        type: DataTypes.DATE,
+        default: new Date().toUTCString(),
+        field: 'timestamp',
+      },
       createdAt: {
         type: DataTypes.DATE,
         default: new Date().toUTCString(),

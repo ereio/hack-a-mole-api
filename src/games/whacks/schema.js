@@ -12,8 +12,8 @@ export default gql`
  
     type Whack {
       id: ID!
-      gameId: ID!
-      moleId: ID
+      gameId: String!
+      moleId: String
       cell: String! 
       hit: Boolean!
       timestamp: DateTime!
@@ -21,8 +21,8 @@ export default gql`
 
     input WhackInput {
       gameId: String!
-      cell: String!
       moleId: String
+      cell: String!
       hit: Boolean
       timestamp: DateTime!
     }  
