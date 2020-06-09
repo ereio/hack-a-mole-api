@@ -12,4 +12,4 @@ A home for the moles
 
 #### Database Security
 
-- The postgres database requires the server has a file under ```~/secrets/passwordfile``` in order to set the default password for the "moleman" postgres user. This file should not be accessible to anyone other than the database container and process
+- The postgres database requires the docker host has a file under ```~/secrets/passwordfile``` in order to set the default password for the "moleman" postgres user. This file should not be accessible to anyone other than the docker host and instance
