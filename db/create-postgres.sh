@@ -13,9 +13,10 @@
 
 docker run -d --rm \
     --name postgres-mole \
+    -v ~/secrets:/run/secrets/ \
     -p 5432:5432 \
     -e PGDATA=/var/lib/postgresql/data/pgdata \
     -e POSTGRES_USER=moleman \
-    -e POSTGRES_PASSWORD=mysecretpassword \
+    -e POSTGRES_PASSWORD_FILE=/run/secrets/passwordfile \
     -v pgdata:/var/lib/postgresql/data \
     postgres
