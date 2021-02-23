@@ -4,23 +4,14 @@ import { ForbiddenError } from 'apollo-server';
 import bcrypt from 'bcrypt';
 import { v4 as uuidv4 } from 'uuid';
 
-import {
-  firebaseAdmin,
-} from '../libs/firebase';
 
 const NOT_AUTHENTICATED_ERROR = 'Not Authenticated';
 
 export const verifyIdToken = async (token) => {
-  if (!token || token === 'undefined' || token === 'null') { // lol
+  if (!token || token === 'undefined' || token === 'null') {
     return false;
   }
-
-  try {
-    return await firebaseAdmin.auth().verifyIdToken(token);
-  } catch (error) {
-    console.error('[verifyIdToken]', error.message);
-    return false;
-  }
+  return true;
 };
 
 
@@ -56,12 +47,10 @@ export const loginUser = async (
     throw Error('Failed to login. Bad email or password provided');
   }
 
-  const token = await firebaseAdmin.auth().createCustomToken(auth.id);
-
   const authUser = {
     id: auth.id,
     email: auth.email,
-    token,
+    token: uuidv4(),
   };
 
   console.log({
@@ -117,12 +106,4 @@ export const signupUser = async (
  * Create a user
  */
 export const signOut = async (parent, params, { user }) => {
-  try {
-    await firebaseAdmin.auth().revokeRefreshTokens(user.token);
-    return true;
-  } catch (error) {
-    // eslint-disable-next-line
-    console.error(error);
-    return false;
-  }
 };
