@@ -22,32 +22,38 @@ app.use(helmet());
 
 console.log('[main] express initialized');
 
-// Initialize Apollo Server Instance w/ attached models
+// initialize restful endpoints
+require('./router')(app, models);
+
+console.log('[main] RESTful endpoints initialized');
+
+// initialize Apollo Server Instance w/ attached models
 const apollo = initApolloServer(models);
 
 console.log('[main] apollo initialized');
 
-// Attach apollo server to express
+// attach apollo server to express
 apollo.applyMiddleware({ app, path: '/graphql' });
 
-// Attach app to port
+// attach app to port
 const server = http.createServer(app);
 
 console.log('[main] http initialized');
 
-// Allow subscriptions on this apollo server
+// allow subscriptions on this apollo server
 apollo.installSubscriptionHandlers(server);
 
 console.log('[main] beginning sync');
+
 sequelize.sync().then(async () => {
   server.listen({ port }, async () => {
     try {
       await sequelize.authenticate();
 
       // eslint-disable-next-line
-      console.log( `🐿  Server ready at http://localhost:${port}${apollo.graphqlPath}`);
+      console.log(`🚀 Server ready at http://localhost:${port}${apollo.graphqlPath}`);
       // eslint-disable-next-line
-      console.log(`🐿  Subscriptions ready at ws://localhost:${port}${apollo.subscriptionsPath}`);
+      console.log(`🚀 Subscriptions ready at ws://localhost:${port}${apollo.subscriptionsPath}`);
 
       setInterval(() => server.getConnections((error, count) => {
         // eslint-disable-next-line
