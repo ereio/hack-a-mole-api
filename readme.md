@@ -1,14 +1,13 @@
-# Hack A Mole API
+# Hack A Mole api
 
-A home for the moles
+A whack-a-mole game backend example 🦔
 
-### Setup
+Using ```nodejs```, ```graphql```, ```apollo```, ```express``` and ```postgresql``` 
 
-#### Firebase Authentication
-
-- In order to generate authentication tokens, you'll need to create a firebase account to generate authentication credentials
-- After creating a firebase project, you'll need to export google services account credentials to link the backend with the firebase admin sdk. Instructions to get this file [can be found here](https://firebase.google.com/support/guides/service-accounts)
-- place the file in the ```src/libs/firebase/``` directory titled as ```google-service-account.json```, you'll see the corresponding import in the ```index.js```
+## Convertion Effort
+- Modernize react w/ hooks
+- Convert all components to Typescript
+    - create typed objects for models
 
 #### Database Security
 

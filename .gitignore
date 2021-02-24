@@ -80,3 +80,6 @@ typings/
 .DS_Store
 
 google-service-account*
+.gitsecret/keys/random_seed
+!*.secret
+.env.prod
