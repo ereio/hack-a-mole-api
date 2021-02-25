@@ -15,7 +15,7 @@ const port = process.env.PORT || 4000;
 
 // create express app instance
 const app = express();
-app.use(bodyParser.json({ limit: '10mb' }));
+app.use(bodyParser.json({ limit: '3mb' }));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cors());
 app.use(helmet());

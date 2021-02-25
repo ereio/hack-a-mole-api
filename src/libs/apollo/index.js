@@ -2,7 +2,7 @@ import { ApolloServer } from 'apollo-server-express';
 
 import schemas from './schemas';
 import resolvers from './resolvers';
-import { verifyIdToken } from '../../auth/resolvers';
+import { checkAuthenticated } from '../../auth/resolvers';
 
 const initApolloServer = (models) => new ApolloServer({
   typeDefs: schemas,
@@ -14,18 +14,20 @@ const initApolloServer = (models) => new ApolloServer({
   subscriptions: {
     keepAlive: 40000,
     onConnect: async (params, socket) => {
+      // eslint-disable-next-line no-param-reassign
       socket.isAlive = true;
 
       let token;
       if (!params) {
         const { headers } = socket.upgradeReq;
         const protocols = headers['sec-websocket-protocol'];
-        token = protocols.split(', ')[2];
+        const [, , socketToken] = protocols.split(', ');
+        token = socketToken;
       } else {
         token = params['x-token'];
       }
 
-      const user = await verifyIdToken(token);
+      const user = await checkAuthenticated(token);
       return {
         models,
         user,
@@ -39,7 +41,7 @@ const initApolloServer = (models) => new ApolloServer({
   context: async ({ req, connection }) => {
     if (req) {
       const token = req.headers['x-token'];
-      const user = await verifyIdToken(token);
+      const user = await checkAuthenticated(null, { token }, { models });
       return {
         models,
         user,
@@ -51,6 +53,8 @@ const initApolloServer = (models) => new ApolloServer({
         models,
       };
     }
+
+    return {};
   },
 });
 

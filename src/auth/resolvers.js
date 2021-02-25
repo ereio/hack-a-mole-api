@@ -3,27 +3,39 @@ import { skip } from 'graphql-resolvers';
 import { ForbiddenError } from 'apollo-server';
 import bcrypt from 'bcrypt';
 import { v4 as uuidv4 } from 'uuid';
+import jwt from 'jsonwebtoken';
 
-
+const { MOLE_SECRET } = process.env;
 const NOT_AUTHENTICATED_ERROR = 'Not Authenticated';
 
-export const verifyIdToken = async (token) => {
+
+export const checkAuthenticated = async (parent, { token }, { models }) => {
   if (!token || token === 'undefined' || token === 'null') {
     return false;
   }
-  return true;
+
+  return models.Auth.findOne({ where: { token }, raw: true });
 };
 
 
 export const isAuthenticated = async (parent, args, { user }) => {
   console.log('[isAuthenticated]', user);
-  if (!user) {
+
+  if (!user || !user.token) {
     throw new ForbiddenError(NOT_AUTHENTICATED_ERROR);
+  }
+
+  let token;
+  try {
+    token = jwt.verify(user.token, MOLE_SECRET);
+  } catch (error) {
+    throw new ForbiddenError(NOT_AUTHENTICATED_ERROR);
+  } finally {
+    console.log('[isAuthenticated]', token);
   }
 
   return skip;
 };
-
 
 /**
  * Create a user
@@ -33,33 +45,28 @@ export const loginUser = async (
   { email, password },
   { models },
 ) => {
-  const auth = await models.Auths.findOne({ where: { email }, raw: true });
+  const auth = await models.Auths.findOne({ where: { email } });
 
   console.log('[loginUser]', auth);
   if (!auth) {
     throw Error('Failed to login. Bad email or password provided');
   }
 
-  const match = await bcrypt.compare(password, auth.passwordHash);
+  const match = await bcrypt.compare(password, auth.hash);
 
   console.log('[loginUser]', match);
   if (!match) {
     throw Error('Failed to login. Bad email or password provided');
   }
 
-  const authUser = {
-    id: auth.id,
+  const token = jwt.sign({
     email: auth.email,
-    token: uuidv4(),
-  };
+    hash: auth.hash,
+  }, MOLE_SECRET);
 
-  console.log({
-    id: auth.id,
-    email: auth.email,
-    token: '[token redacted]',
-  });
+  await auth.update({ token });
 
-  return authUser;
+  return auth;
 };
 
 
@@ -68,36 +75,36 @@ export const loginUser = async (
  */
 export const signupUser = async (
   parent,
-  { email, password, username },
+  { email, username, password },
   { models, user },
 ) => {
-  console.log('[createUser]', { email, password, username });
+  console.log('[createUser] creating', username);
+
   if (user) {
     throw Error('Signed in users cannot create new accounts');
   }
 
-  const hash = await bcrypt.hash(password, 14);
+  const salt = await bcrypt.genSalt(14);
+  const hash = await bcrypt.hash(password, salt);
 
   if (!hash) {
     throw Error('Could not create account, please try again');
   }
 
-  const newAuth = await models.Auths.create({
+  const authNew = await models.Auths.create({
     id: uuidv4(),
-    username,
     email,
-    passwordHash: hash,
+    salt,
+    hash,
   });
 
-  console.log('[createUser]', newAuth);
-
-  await models.Users.create({
+  const userNew = await models.Users.create({
     id: uuidv4(),
-    authId: newAuth.id,
+    authId: authNew.id,
     username,
   });
 
-  console.log('[createUser]', username);
+  console.log('[createUser] success', userNew.dataValues.username);
 
   return true;
 };

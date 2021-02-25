@@ -1,7 +1,5 @@
-import { calculateRecurring, fetchTransactions } from './transactions/middleware';
-import { exampleMiddleware } from './users/middleware';
+import { exampleMiddleware } from './admin/middleware';
 
-module.exports = function (app, models) {
-  app.get('/transactions', fetchTransactions);
-  app.get('/calculate', calculateRecurring);
+module.exports = (app, models) => {
+  app.get('/health', exampleMiddleware(models));
 };

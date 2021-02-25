@@ -12,10 +12,20 @@ const auths = (sequelize, DataTypes) => {
         allowNull: false,
         field: 'email',
       },
-      passwordHash: {
+      salt: {
         type: DataTypes.TEXT,
         allowNull: false,
-        field: 'password_hash',
+        field: 'salt',
+      },
+      hash: {
+        type: DataTypes.TEXT,
+        allowNull: false,
+        field: 'hash',
+      },
+      token: {
+        type: DataTypes.TEXT,
+        allowNull: false,
+        field: 'token',
       },
       createdAt: {
         type: DataTypes.DATE,
