@@ -29,6 +29,7 @@
     "firebase-admin": "^8.12.1",
     "graphql": "^15.0.0",
     "graphql-iso-date": "^3.6.1",
+    "graphql-rate-limit-directive": "^1.2.1",
     "graphql-resolvers": "^0.4.2",
     "graphql-subscriptions": "^1.1.0",
     "helmet": "^3.22.0",

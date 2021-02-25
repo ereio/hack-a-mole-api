@@ -5,7 +5,7 @@ import bodyParser from 'body-parser';
 import cors from 'cors';
 import helmet from 'helmet';
 
-import models, { sequelize } from './libs/sequelize';
+import { sequelize, models } from './libs/sequelize';
 import { initApolloServer } from './libs/apollo';
 
 console.log('[main] starting');

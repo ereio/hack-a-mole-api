@@ -16,7 +16,6 @@ export const __resolveTypeEvent = (event) => {
   return type;
 };
 
-
 const gamesUnsafe = async (
   parent,
   args,

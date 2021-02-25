@@ -1,5 +1,5 @@
 
-import { skip } from 'graphql-resolvers';
+import { skip, combineResolvers } from 'graphql-resolvers';
 import { ForbiddenError } from 'apollo-server';
 import bcrypt from 'bcrypt';
 import { v4 as uuidv4 } from 'uuid';
@@ -8,39 +8,35 @@ import jwt from 'jsonwebtoken';
 const { MOLE_SECRET } = process.env;
 const NOT_AUTHENTICATED_ERROR = 'Not Authenticated';
 
-
-export const checkAuthenticated = async (parent, { token }, { models }) => {
+export const checkAuthenticated = async (parent, { token }, context) => {
   if (!token || token === 'undefined' || token === 'null') {
     return false;
   }
 
-  return models.Auth.findOne({ where: { token }, raw: true });
-};
-
-
-export const isAuthenticated = async (parent, args, { user }) => {
-  console.log('[isAuthenticated]', user);
-
-  if (!user || !user.token) {
-    throw new ForbiddenError(NOT_AUTHENTICATED_ERROR);
-  }
-
-  let token;
   try {
-    token = jwt.verify(user.token, MOLE_SECRET);
+    // TODO: add banlist of tokens to auth model
+    return jwt.verify(user.token, MOLE_SECRET);
   } catch (error) {
     throw new ForbiddenError(NOT_AUTHENTICATED_ERROR);
   } finally {
-    console.log('[isAuthenticated]', token);
+    console.log('[checkAuthenticated]', token);
+  }
+};
+
+export const isAuthenticated = async (parent, { token }, { user }) => {
+  console.log('[isAuthenticated]', user);
+
+  if (!user) {
+    throw new ForbiddenError(NOT_AUTHENTICATED_ERROR);
   }
 
   return skip;
 };
 
 /**
- * Create a user
+ * Login a user
  */
-export const loginUser = async (
+const loginUserUnsafe = async (
   parent,
   { email, password },
   { models },
@@ -60,9 +56,12 @@ export const loginUser = async (
   }
 
   const token = jwt.sign({
+    id: auth.id,
     email: auth.email,
     hash: auth.hash,
-  }, MOLE_SECRET);
+  }, MOLE_SECRET, {
+    expiresIn: '15m'
+  });
 
   await auth.update({ token });
 
@@ -71,18 +70,25 @@ export const loginUser = async (
 
 
 /**
- * Create a user
+ * Signup a new user
  */
-export const signupUser = async (
+const signupUserUnsafe = async (
   parent,
   { email, username, password },
   { models, user },
 ) => {
   console.log('[createUser] creating', username);
 
+  const userExisting = models.Users.findOne({ where: { username } });
+
   if (user) {
     throw Error('Signed in users cannot create new accounts');
   }
+
+  if (userExisting) {
+    throw Error('Username already exists, try again');
+  }
+
 
   const salt = await bcrypt.genSalt(14);
   const hash = await bcrypt.hash(password, salt);
@@ -112,5 +118,11 @@ export const signupUser = async (
 /**
  * Create a user
  */
-export const signOut = async (parent, params, { user }) => {
+const signOutUnsafe = async (parent, params, { user, models }) => {
 };
+
+// purposefully unauthenticated
+export const loginUser = loginUserUnsafe;
+export const signupUser = signupUserUnsafe;
+
+export const signOut = combineResolvers(isAuthenticated, signOutUnsafe);

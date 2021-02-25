@@ -27,7 +27,7 @@ const initApolloServer = (models) => new ApolloServer({
         token = params['x-token'];
       }
 
-      const user = await checkAuthenticated(token);
+      const user = await checkAuthenticated(null, { token }, {});
       return {
         models,
         user,
@@ -41,10 +41,10 @@ const initApolloServer = (models) => new ApolloServer({
   context: async ({ req, connection }) => {
     if (req) {
       const token = req.headers['x-token'];
-      const user = await checkAuthenticated(null, { token }, { models });
+      const user = await checkAuthenticated(null, { token }, {});
       return {
-        models,
         user,
+        models,
       };
     }
     if (connection) {

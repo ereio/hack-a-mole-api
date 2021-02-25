@@ -24,7 +24,7 @@ const auths = (sequelize, DataTypes) => {
       },
       token: {
         type: DataTypes.TEXT,
-        allowNull: false,
+        allowNull: true,
         field: 'token',
       },
       createdAt: {

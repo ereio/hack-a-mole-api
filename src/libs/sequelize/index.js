@@ -1,6 +1,5 @@
 import Sequelize from 'sequelize';
-
-const url = require('url');
+import url from 'url';
 
 const databaseUrl = url.parse(process.env.DATABASE_URL);
 const host = databaseUrl.hostname;
@@ -8,44 +7,7 @@ const database = databaseUrl.path.slice(1);
 const username = databaseUrl.auth.substr(0, databaseUrl.auth.indexOf(':'));
 const password = databaseUrl.auth.substr(databaseUrl.auth.indexOf(':') + 1, databaseUrl.auth.length);
 
-const { Op } = Sequelize;
-
-const operatorsAliases = {
-  $eq: Op.eq,
-  $ne: Op.ne,
-  $gte: Op.gte,
-  $gt: Op.gt,
-  $lte: Op.lte,
-  $lt: Op.lt,
-  $not: Op.not,
-  $in: Op.in,
-  $notIn: Op.notIn,
-  $is: Op.is,
-  $like: Op.like,
-  $notLike: Op.notLike,
-  $iLike: Op.iLike,
-  $notILike: Op.notILike,
-  $regexp: Op.regexp,
-  $notRegexp: Op.notRegexp,
-  $iRegexp: Op.iRegexp,
-  $notIRegexp: Op.notIRegexp,
-  $between: Op.between,
-  $notBetween: Op.notBetween,
-  $overlap: Op.overlap,
-  $contains: Op.contains,
-  $contained: Op.contained,
-  $adjacent: Op.adjacent,
-  $strictLeft: Op.strictLeft,
-  $strictRight: Op.strictRight,
-  $noExtendRight: Op.noExtendRight,
-  $noExtendLeft: Op.noExtendLeft,
-  $and: Op.and,
-  $or: Op.or,
-  $any: Op.any,
-  $all: Op.all,
-  $values: Op.values,
-  $col: Op.col,
-};
+const ssl = process.env.DB_SSL === "true"
 
 const config = {
   host,
@@ -53,15 +15,14 @@ const config = {
   database,
   username,
   password,
-  ssl: false, // TODO:
+  ssl: ssl,
   logging: false,
   pool: {
     max: Number(process.env.DB_POOL_SIZE),
     idle: Number(process.env.DB_TIMEOUT),
     acquire: Number(90000),
   },
-  dialectOptions: { ssl: false }, // TODO:
-  operatorsAliases,
+  dialectOptions: { ssl: ssl },
 };
 
 const sequelize = new Sequelize(config.database,
@@ -79,5 +40,4 @@ const models = {
 };
 
 
-export { sequelize };
-export default models;
+export { sequelize, models }; 
