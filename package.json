@@ -1,14 +1,16 @@
 {
-  "name": "mole-api",
+  "name": "hack-a-mole-backend",
   "version": "0.0.1",
-  "description": "a home for the moles",
+  "description": "A whack-a-mole game backend example 🦔",
   "main": "index.js",
   "license": "MIT",
   "scripts": {
     "start": "nodemon --watch src --exec 'yarn local'",
     "local": "yarn build && NODE_PATH=src/ node -r @babel/register -r dotenv/config build dotenv_config_path=.env",
-    "build": "yarn clean && yarn build-babel",
-    "build-babel": "./node_modules/.bin/babel ./src -d ./build -s",
+    "build": "yarn clean && yarn build:babel",
+    "build:babel": "./node_modules/.bin/babel ./src -d ./build -s",
+    "build:clean": "docker rmi $(docker images -f \"dangling=true\" -q)",
+    "build:container": "docker build -t hack-a-mole-api:latest .",
     "clean": "rm -rf build && mkdir build",
     "init-eslint": "eslint --init"
   },
@@ -28,6 +30,7 @@
     "express": "^4.17.1",
     "firebase-admin": "^8.12.1",
     "graphql": "^15.0.0",
+    "graphql-constraint-directive": "^2.1.1",
     "graphql-iso-date": "^3.6.1",
     "graphql-rate-limit-directive": "^1.2.1",
     "graphql-resolvers": "^0.4.2",

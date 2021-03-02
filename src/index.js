@@ -1,4 +1,3 @@
-
 import http from 'http';
 import express from 'express';
 import bodyParser from 'body-parser';
@@ -25,7 +24,7 @@ console.log('[main] express initialized');
 // initialize restful endpoints
 require('./router')(app, models);
 
-console.log('[main] RESTful endpoints initialized');
+console.log('[main] restful endpoints initialized');
 
 // initialize Apollo Server Instance w/ attached models
 const apollo = initApolloServer(models);

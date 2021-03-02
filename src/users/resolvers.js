@@ -20,11 +20,9 @@ export const searchUsersUnsafe = async (parent, { username }, { models }) => {
   try {
     return await models.Users.findAll({ where: { $iLike: username }, raw: true });
   } catch (error) {
-    console.log('[searchUsers]', error);
     return [];
   }
 };
-
 
 /**
  * Check Available Email
@@ -36,7 +34,6 @@ export const checkAvailableEmail = async (parent, { email }, { models }) => {
     }
 
     const match = await models.Auths.findOne({ where: { email }, raw: true });
-    console.log('[checkAvailableEmail]', !match);
     return !match;
   } catch (error) {
     console.log('[checkAvailableEmail]', error);
@@ -54,7 +51,6 @@ export const checkAvailableUsername = async (parent, { username }, { models }) =
     }
 
     const match = await models.Users.findOne({ where: { username }, raw: true });
-    console.log('[checkAvailableUsername]', !match);
     return !match;
   } catch (error) {
     console.log('[checkAvailableUsername]', error);
@@ -73,7 +69,6 @@ export const updateUserGamesUnsafe = async (parent, { username }, { models }) =>
     return false;
   }
 };
-
 
 export const updateUserGames = updateUserGamesUnsafe;
 export const user = combineResolvers(isAuthenticated, userUnsafe);

@@ -1333,7 +1333,7 @@
     lodash "4.17.21"
     tslib "~2.1.0"
 
-"@graphql-tools/schema@^6.2.4":
+"@graphql-tools/schema@^6.0.9", "@graphql-tools/schema@^6.2.4":
   version "6.2.4"
   resolved "https://registry.yarnpkg.com/@graphql-tools/schema/-/schema-6.2.4.tgz#cc4e9f5cab0f4ec48500e666719d99fc5042481d"
   integrity sha512-rh+14lSY1q8IPbEv2J9x8UBFJ5NrDX9W5asXEUlPp+7vraLp/Tiox4GXdgyA92JhwpYco3nTf5Bo2JDMt1KnAQ==
@@ -1386,7 +1386,7 @@
     valid-url "1.0.9"
     ws "7.4.3"
 
-"@graphql-tools/utils@^6.2.4":
+"@graphql-tools/utils@^6.0.9", "@graphql-tools/utils@^6.2.4":
   version "6.2.4"
   resolved "https://registry.yarnpkg.com/@graphql-tools/utils/-/utils-6.2.4.tgz#38a2314d2e5e229ad4f78cca44e1199e18d55856"
   integrity sha512-ybgZ9EIJE3JMOtTrTd2VcIpTXtDrn2q6eiYkeYMKRVh3K41+LZa6YnR2zKERTXqTWqhobROwLt4BZbw2O3Aeeg==
@@ -4021,6 +4021,15 @@ graceful-fs@^4.1.11, graceful-fs@^4.1.2:
   version "4.2.6"
   resolved "https://registry.yarnpkg.com/graceful-fs/-/graceful-fs-4.2.6.tgz#ff040b2b0853b23c3d31027523706f1885d76bee"
   integrity sha512-nTnJ528pbqxYanhpDYsi4Rd8MAeaBA67+RZ10CM1m3bTAVFEDcd5AuA4a6W5YkGZ1iNXHzZz8T6TBKLeBuNriQ==
+
+graphql-constraint-directive@^2.1.1:
+  version "2.1.1"
+  resolved "https://registry.yarnpkg.com/graphql-constraint-directive/-/graphql-constraint-directive-2.1.1.tgz#d27cef70c6713e0b49c910ea6e71e11c6d4ca65a"
+  integrity sha512-KybJ4yIqN61ZukJf711UQ3pt4qHBUduXgjG/aO6tfDt2O6Ogdp1WJWzw3tl+WR/OcnAn4gAGLZxQ1KKMPAk6FQ==
+  dependencies:
+    "@graphql-tools/schema" "^6.0.9"
+    "@graphql-tools/utils" "^6.0.9"
+    validator "^10.2.0"
 
 graphql-extensions@^0.12.8:
   version "0.12.8"
@@ -7212,7 +7221,7 @@ validate-npm-package-license@^3.0.1:
     spdx-correct "^3.0.0"
     spdx-expression-parse "^3.0.0"
 
-validator@^10.11.0:
+validator@^10.11.0, validator@^10.2.0:
   version "10.11.0"
   resolved "https://registry.yarnpkg.com/validator/-/validator-10.11.0.tgz#003108ea6e9a9874d31ccc9e5006856ccd76b228"
   integrity sha512-X/p3UZerAIsbBfN/IwahhYaBbY68EN/UQBWHtsbXGT5bfrH/p4NQzUCG1kF/rtKaNpnJ7jAu6NGTdSNtyNIXMw==

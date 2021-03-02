@@ -1,12 +1,18 @@
 import { ApolloServer } from 'apollo-server-express';
 
+import { createRateLimitDirective, createRateLimitTypeDef } from 'graphql-rate-limit-directive';
+import { constraintDirective, constraintDirectiveTypeDefs } from 'graphql-constraint-directive';
 import schemas from './schemas';
 import resolvers from './resolvers';
 import { checkAuthenticated } from '../../auth/resolvers';
 
 const initApolloServer = (models) => new ApolloServer({
-  typeDefs: schemas,
   resolvers,
+  typeDefs: [createRateLimitTypeDef(), constraintDirectiveTypeDefs, ...schemas],
+  schemaTransforms: [constraintDirective()],
+  schemaDirectives: {
+    rateLimit: createRateLimitDirective(),
+  },
   formatError: (error) => {
     console.error(error);
     return error;
@@ -57,6 +63,5 @@ const initApolloServer = (models) => new ApolloServer({
     return {};
   },
 });
-
 
 export { initApolloServer };
