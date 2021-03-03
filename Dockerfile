@@ -11,10 +11,11 @@ COPY --chown=node:node package.json ./package.json
 # Install app dependencies with yarn
 RUN yarn
 
+RUN npm run rebuild bcrypt --build-from-source
+
 # Copy the app's source code insider the builder image
 COPY --chown=node:node ./node_modules ./node_modules
 COPY --chown=node:node ./src ./src
-
 
 # Start a fresh instance to remove pre-build dependencies
 FROM node:14-alpine
