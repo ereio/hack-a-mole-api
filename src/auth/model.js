@@ -1,4 +1,3 @@
-
 const auths = (sequelize, DataTypes) => {
   const Auth = sequelize.define('auth',
     {

@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mole-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mole-api
+  template:
+    metadata:
+      labels:
+        app: mole-api
+    spec:
+      containers:
+        - name: mole-api
+          image: registry.digitalocean.com/bounce/mole-api:latest
+          ports:
+            - containerPort: 8080
+          env:
+            - name: HOSTNAME
+              value: mole-api

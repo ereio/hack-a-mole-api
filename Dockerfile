@@ -11,11 +11,12 @@ COPY --chown=node:node package.json ./package.json
 # Install app dependencies with yarn
 RUN yarn
 
-# Bundle the app's source code inside the Docker image
-COPY --chown=node:node . .
+# Copy the app's source code insider the builder image
+COPY --chown=node:node ./node_modules ./node_modules
+COPY --chown=node:node ./src ./src
 
-# Clean build folder so the yarn serve command builds fresh
-RUN yarn build:native
+# Bundle the app's source code inside the builder image
+RUN yarn build
 
 # Start a fresh instance to remove pre-build dependencies
 FROM node:12-alpine
@@ -31,6 +32,7 @@ COPY --chown=node:node yarn.lock ./yarn.lock
 COPY --chown=node:node package.json ./package.json
 COPY --chown=node:node ${CONFIG_LOCATION} ./${CONFIG_LOCATION}
 
+# Copy the build and the node_modules dependencies over the runner image
 COPY --from=BUILDER --chown=node:node /home/node/build ./build
 COPY --from=BUILDER --chown=node:node /home/node/node_modules ./node_modules
 

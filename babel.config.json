@@ -1,16 +1,23 @@
 {
-  "presets": [[ "@babel/env",
-    { "useBuiltIns": "usage",  
-      "targets": {
-        "node": "current"
-      },
-      "corejs": { 
-        "version": 2,
-        "proposals": true
+  "presets": [
+    [
+      "@babel/preset-env",
+      {
+        "useBuiltIns": "usage",
+        "targets": {
+          "node": "current"
+        },
+        "corejs": {
+          "version": 2,
+          "proposals": true
+        }
       }
-    }
-  ]],
+    ]
+  ],
   "plugins": [
-    ["inline-json-import", {}]
+    [
+      "inline-json-import",
+      {}
+    ]
   ]
 }

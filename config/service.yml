@@ -1,0 +1,12 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: mole-api-service
+spec:
+  ports:
+    - port: 80
+      protocol: TCP
+      targetPort: 8080
+  selector:
+    app: mole-api-service
+  type: ClusterIP

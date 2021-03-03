@@ -42,14 +42,12 @@ const loginUserUnsafe = async (
 ) => {
   const auth = await models.Auths.findOne({ where: { email }, raw: true });
 
-  console.log('[loginUser]', auth);
   if (!auth) {
     throw Error('Failed to login. Bad email or password provided');
   }
 
   const match = await bcrypt.compare(password, auth.hash);
 
-  console.log('[loginUser]', match);
   if (!match) {
     throw Error('Failed to login. Bad email or password provided');
   }

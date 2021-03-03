@@ -1,14 +1,14 @@
 version: "3.7"
 services:
-  # hack-a-mole:
-  #   container_name: hack-a-mole
-  #   restart: always
-  #   image: hack-a-mole-api:latest
-  #   environment:
-  #     - PORT=8080
-  #     - CONFIG_LOCATION=.env
-  #   ports:
-  #     - "8080:8080"
+  mole-api:
+    container_name: mole-api
+    restart: always
+    image: mole-api:latest
+    environment:
+      - PORT=8080
+      - CONFIG_LOCATION=.env
+    ports:
+      - "8080:8080"
   postgres:
     container_name: postgres
     restart: always
