@@ -6,8 +6,8 @@
   "license": "MIT",
   "scripts": {
     "start": "nodemon --watch src --exec 'yarn build && yarn start:native'",
-    "start:native": "nodemon -r @babel/register -r dotenv/config build dotenv_config_path=.env",
-    "serve": "node  -r @babel/register -r dotenv/config build dotenv_config_path=$CONFIG_LOCATION",
+    "start:native": "nodemon -r @babel/register -r dotenv/config build/index.js dotenv_config_path=.env",
+    "serve": "node -r @babel/register -r dotenv/config build/index.js dotenv_config_path=$CONFIG_LOCATION",
     "build": "./node_modules/.bin/babel ./src -d build -s",
     "build:clean": "docker rmi $(docker images -f \"dangling=true\" -q)",
     "build:container": "docker build -t mole-api:latest .",
