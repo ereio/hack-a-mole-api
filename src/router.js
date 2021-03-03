@@ -1,5 +1,5 @@
 import { exampleMiddleware } from './admin/middleware';
 
-module.exports = (app, models) => {
+export const initMiddleware = (app, models) => {
   app.get('/health', exampleMiddleware(models));
 };

@@ -4,6 +4,7 @@ import bodyParser from 'body-parser';
 import cors from 'cors';
 import helmet from 'helmet';
 
+import { initMiddleware } from './router';
 import { sequelize, models } from './libs/sequelize';
 import { initApolloServer } from './libs/apollo';
 
@@ -22,7 +23,7 @@ app.use(helmet());
 console.log('[main] express initialized');
 
 // initialize restful endpoints
-require('./router')(app, models);
+initMiddleware(app, models);
 
 console.log('[main] restful endpoints initialized');
 

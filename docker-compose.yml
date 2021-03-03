@@ -9,6 +9,7 @@ services:
       - CONFIG_LOCATION=.env
     ports:
       - "8080:8080"
+
   postgres:
     container_name: postgres
     restart: always
