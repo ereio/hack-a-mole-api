@@ -13,8 +13,8 @@
     "serve": "node --experimental-modules --experimental-specifier-resolution=node -r dotenv/config src/index.js dotenv_config_path=.env.prod",
     "build:clean": "docker rmi $(docker images -f \"dangling=true\" -q)",
     "build:container": "docker build -t mole-api:latest .",
-    "build:tag": "docker --build-arg CONFIG_LOCATION=.env.prod tag mole-api:latest registry.digitalocean.com/bounce/mole-api:latest",
-    "deploy": "yarn build:container && yarn build:tag && docker push registry.digitalocean.com/bounce/mole-api:latest && yarn build:clean",
+    "build:tag": "docker tag mole-api:latest registry.digitalocean.com/bounce/mole-api:latest",
+    "deploy": "yarn build:container && yarn build:tag && docker push registry.digitalocean.com/bounce/mole-api:latest",
     "clean": "rm -rf build && mkdir build",
     "init-eslint": "eslint --init"
   },
@@ -22,6 +22,7 @@
     "apollo-server": "^2.13.1",
     "apollo-server-express": "^2.13.1",
     "bcrypt": "^5.0.0",
+    "bcryptjs": "^2.4.3",
     "body-parser": "^1.19.0",
     "cors": "^2.8.5",
     "dotenv": "^8.2.0",

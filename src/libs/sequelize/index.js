@@ -8,31 +8,38 @@ import Whacks from '../../games/whacks/model';
 import Spawns from '../../games/spawns/model';
 
 const {
-  DB_POOL_SIZE = 1, DB_TIMEOUT = 100, DB_SSL = 'true', DATABASE_URL = 'localhost',
+  DB_URL = 'localhost',
+  DB_PORT = 5432,
+  DB_POOL_SIZE = 1,
+  DB_TIMEOUT = 100,
+  DB_SSL = 'true',
 } = process.env;
 
-const databaseUrl = url.parse(DATABASE_URL);
+const databaseUrl = url.parse(DB_URL);
 const host = databaseUrl.hostname;
+const ssl = DB_SSL === 'true';
 const database = databaseUrl.path.slice(1);
 const username = databaseUrl.auth.substr(0, databaseUrl.auth.indexOf(':'));
 const password = databaseUrl.auth.substr(databaseUrl.auth.indexOf(':') + 1, databaseUrl.auth.length);
 
-const ssl = DB_SSL === 'true';
-
 const config = {
   host,
   dialect: 'postgres',
+  port: DB_PORT,
   database,
   username,
   password,
-  ssl,
   logging: false,
   pool: {
     max: Number(DB_POOL_SIZE),
     idle: Number(DB_TIMEOUT),
     acquire: Number(90000),
   },
-  dialectOptions: { ssl },
+  dialectOptions: {
+    ssl: {
+      rejectUnauthorized: ssl,
+    },
+  },
 };
 
 const sequelize = new Sequelize(config.database,
@@ -40,12 +47,14 @@ const sequelize = new Sequelize(config.database,
   config.password,
   config);
 
+const { DataTypes } = Sequelize;
+
 const models = {
-  Auths,
-  Users,
-  Games,
-  Whacks,
-  Spawns,
+  Auths: Auths(sequelize, DataTypes),
+  Users: Users(sequelize, DataTypes),
+  Games: Games(sequelize, DataTypes),
+  Whacks: Whacks(sequelize, DataTypes),
+  Spawns: Spawns(sequelize, DataTypes),
 };
 
 export { sequelize, models };

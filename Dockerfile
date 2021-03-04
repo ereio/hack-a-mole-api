@@ -5,13 +5,13 @@ WORKDIR /home/node
 
 # Copy the env and package/yarn files prior to pulling dependencies
 COPY --chown=node:node .env* ./
-COPY --chown=node:node yarn.lock ./yarn.lock
+# COPY --chown=node:node yarn.lock ./yarn.lock
 COPY --chown=node:node package.json ./package.json
 
-# Install app dependencies with yarn
-RUN yarn
-
-RUN npm run rebuild bcrypt --build-from-source
+RUN apk add --no-cache make gcc g++ python && \
+  npm install && \
+  npm rebuild bcrypt --build-from-source && \
+  apk del make gcc g++ python
 
 # Copy the app's source code insider the builder image
 COPY --chown=node:node ./node_modules ./node_modules
@@ -27,8 +27,9 @@ ENV PORT 8080
 ENV CONFIG_LOCATION .env.prod
 
 # Copy the env and package/yarn files prior to pulling dependencies
-COPY --chown=node:node yarn.lock ./yarn.lock
+# COPY --chown=node:node yarn.lock ./yarn.lock
 COPY --chown=node:node package.json ./package.json
+# COPY --chown=node:node package-lock.json ./package-lock.json
 COPY --chown=node:node ${CONFIG_LOCATION} ./${CONFIG_LOCATION}
 
 # Copy the build and the node_modules dependencies over the runner image
