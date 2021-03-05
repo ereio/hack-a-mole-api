@@ -7,7 +7,7 @@ import { NOT_AUTHENTICATED_ERROR } from '../libs/errors/values';
 
 const { MOLE_SECRET } = process.env;
 
-const checkAuthenticated = async (parent, { token }) => {
+const checkAuthenticated = async (parent, { token }, context) => {
   if (!token || token === 'undefined' || token === 'null') {
     return false;
   }
@@ -36,7 +36,7 @@ const isAuthenticated = async (parent, args, { user }) => {
 const loginUserUnsafe = async (
   parent,
   { loginInput: { email, password } },
-  { models },
+  { models, res },
 ) => {
   const auth = await models.Auths.findOne({ where: { email }, raw: true });
 
@@ -58,6 +58,12 @@ const loginUserUnsafe = async (
   }, MOLE_SECRET, {
     expiresIn: '15m',
   });
+
+  // set httpOnly x-token
+  // TODO: convert to refresh token to prevent CSRF
+  res.cookie('x-token', token, {
+    httpOnly: true
+  })
 
   return {
     id: auth.id,

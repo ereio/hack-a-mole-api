@@ -26,8 +26,13 @@ const auths = (sequelize, DataTypes) => {
         allowNull: true,
         field: 'token',
       },
+      refreshes: {
+        type: DataTypes.ARRAY(DataTypes.TEXT),
+        allowNull: true,
+        field: 'token',
+      },
       invalidated: {
-        type: DataTypes.TEXT,
+        type: DataTypes.ARRAY(DataTypes.TEXT),
         allowNull: true,
         field: 'token',
       },
