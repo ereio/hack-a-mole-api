@@ -1,14 +1,28 @@
 import { ApolloServer } from 'apollo-server-express';
+import { makeExecutableSchema } from 'graphql-tools';
+import { applyMiddleware } from 'graphql-middleware';
 
 import { createRateLimitDirective, createRateLimitTypeDef } from 'graphql-rate-limit-directive';
 import { constraintDirective, constraintDirectiveTypeDefs } from 'graphql-constraint-directive';
 import schemas from './schemas';
 import resolvers from './resolvers';
 import { checkAuthenticated } from '../../auth/resolvers';
+import { loggingMiddleware } from './logging';
+import { authUserUnsafe } from '../../users/resolvers';
+
+const typeDefs = [
+  createRateLimitTypeDef(),
+  constraintDirectiveTypeDefs,
+  ...schemas
+];
+
+const schemaExecutable = makeExecutableSchema({ typeDefs, resolvers });
+const schemaWithMiddleware = applyMiddleware(schemaExecutable, loggingMiddleware)
 
 const initApolloServer = (models) => new ApolloServer({
   resolvers,
-  typeDefs: [createRateLimitTypeDef(), constraintDirectiveTypeDefs, ...schemas],
+  typeDefs,
+  schema: schemaWithMiddleware,
   schemaTransforms: [constraintDirective()],
   schemaDirectives: {
     rateLimit: createRateLimitDirective(),
@@ -33,10 +47,12 @@ const initApolloServer = (models) => new ApolloServer({
         token = params['x-token'];
       }
 
-      const user = await checkAuthenticated(null, { token }, {});
+      const auth = await checkAuthenticated(null, { token }, { models });
+      const user = await authUserUnsafe(null, { authId: auth.id }, { models })
       return {
-        models,
+        auth,
         user,
+        models,
       };
     },
     onDisconnect: async (socket) => {
@@ -47,8 +63,10 @@ const initApolloServer = (models) => new ApolloServer({
   context: async ({ req, connection }) => {
     if (req) {
       const token = req.headers['x-token'];
-      const user = await checkAuthenticated(null, { token }, {});
+      const auth = await checkAuthenticated(null, { token }, { models });
+      const user = await authUserUnsafe(null, { authId: auth.id }, { models })
       return {
+        auth,
         user,
         models,
       };

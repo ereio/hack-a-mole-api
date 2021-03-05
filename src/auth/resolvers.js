@@ -7,7 +7,7 @@ import { NOT_AUTHENTICATED_ERROR } from '../libs/errors/values';
 
 const { MOLE_SECRET } = process.env;
 
-export const checkAuthenticated = async (parent, { token }) => {
+const checkAuthenticated = async (parent, { token }) => {
   if (!token || token === 'undefined' || token === 'null') {
     return false;
   }
@@ -17,12 +17,10 @@ export const checkAuthenticated = async (parent, { token }) => {
     return jwt.verify(token, MOLE_SECRET);
   } catch (error) {
     throw new ForbiddenError(NOT_AUTHENTICATED_ERROR);
-  } finally {
-    console.log('[checkAuthenticated]', token);
   }
 };
 
-export const isAuthenticated = async (parent, args, { user }) => {
+const isAuthenticated = async (parent, args, { user }) => {
   console.log('[isAuthenticated]', user);
 
   if (!user) {
@@ -41,6 +39,7 @@ const loginUserUnsafe = async (
   { models },
 ) => {
   const auth = await models.Auths.findOne({ where: { email }, raw: true });
+
 
   if (!auth) {
     throw Error('Failed to login. Bad email or password provided');
@@ -65,6 +64,20 @@ const loginUserUnsafe = async (
     token,
   };
 };
+
+const signOut = async (
+  parent,
+  args,
+  { models, auth },
+) => {
+  const authData = models.Auths.findByPk(auth.id);
+
+  await authData.update({
+    invalidated: [...auth.dataValues.invalidated, auth.token]
+  });
+
+  return true;
+}
 
 /**
  * Signup a new user
@@ -122,7 +135,13 @@ const signupUserUnsafe = async (
 };
 
 // purposefully unauthenticated
-export const loginUser = loginUserUnsafe;
-export const signupUser = signupUserUnsafe;
+const loginUser = loginUserUnsafe;
+const signupUser = signupUserUnsafe;
 
-export const signOut = combineResolvers(isAuthenticated, () => { });
+export {
+  checkAuthenticated,
+  isAuthenticated,
+  signOut,
+  loginUser,
+  signupUser,
+}

@@ -26,6 +26,11 @@ const auths = (sequelize, DataTypes) => {
         allowNull: true,
         field: 'token',
       },
+      invalidated: {
+        type: DataTypes.TEXT,
+        allowNull: true,
+        field: 'token',
+      },
       createdAt: {
         type: DataTypes.DATE,
         default: new Date().toUTCString(),

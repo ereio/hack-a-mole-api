@@ -1,32 +1,48 @@
+import { ForbiddenError } from 'apollo-server';
 import { combineResolvers } from 'graphql-resolvers/lib/combineResolvers';
+import { skip } from 'graphql-resolvers/lib/utils';
 
 import { v4 as uuidv4 } from 'uuid';
 
 import {
   isAuthenticated,
 } from '../auth/resolvers';
+import { NOT_AUTHENTICATED_ERROR } from '../libs/errors/values';
 
 // eslint-disable-next-line
 export const __resolveTypeEvent = (event) => {
-  // eslint-disable-next-line
-  console.log('HELP ME PLEASE ', event, event.hit != null, event.despawn != null);
-
   const type = event.hit !== undefined && event.hit !== null ? 'Whack' : 'Spawn';
 
   return type;
 };
 
-const gamesUnsafe = async (
+// Helper auth function to make sure the 
+// game updated is owned by the user making the call
+const isPermitted = async (parent, { id }, { models, user }) => {
+  const game = await models.Games.findByPk(id);
+
+  if (game.userId !== user.id) {
+    throw new ForbiddenError(NOT_AUTHENTICATED_ERROR);
+  }
+
+  return skip;
+};
+
+const gameUnsafe = async (
   parent,
   args,
   { models, user },
 ) => {
-  const currentUser = await models.Users.findOne(
-    { where: { authId: user.uid }, raw: true },
-  );
+  return await models.Games.findByPk(id);
+}
 
+const gamesUnsafe = async (
+  parent,
+  { userId },
+  { models, user },
+) => {
   return models.Games.findAll({
-    where: { userId: currentUser.id },
+    where: { userId: userId || user.id },
   });
 };
 
@@ -35,17 +51,15 @@ const gameplayUnsafe = async (
   { gameId },
   { models },
 ) => {
-  console.log('[gameplayUnsafe]', gameId);
-
   const spawns = await models.Spawns.findAll({
     where: { gameId }, raw: true,
   });
+
   const whacks = await models.Whacks.findAll({
     where: { gameId }, raw: true,
   });
-  const events = [...spawns, ...whacks];
 
-  return events;
+  return [...spawns, ...whacks];
 };
 
 const createGameUnsafe = async (
@@ -54,33 +68,27 @@ const createGameUnsafe = async (
   { models, user },
 ) => {
   const {
-    score, startTime, endTime,
+    title, score, startTime, endTime,
   } = game;
 
-  console.log('[createGameUnsafe]', user.uid, score, startTime, endTime, models);
+  console.log('[createGameUnsafe]', auth.id, score, startTime, endTime, models);
 
-
-  const currentUser = await models.Users.findOne(
-    { where: { authId: user.uid }, raw: true },
-  );
-
-  const newGameId = uuidv4();
-
-  await models.Games.create({
-    id: newGameId,
-    userId: currentUser.id,
+  const newGame = await models.Games.create({
+    id: uuidv4(),
+    title: title || uuidv4(),
+    userId: user.id,
     score: 0,
     endTime,
     startTime,
   });
 
-  return models.Games.findByPk(newGameId);
+  return models.Games.findByPk(newGame.id);
 };
 
 const updateGameUnsafe = async (
   parent,
   { game },
-  { models },
+  { models, user },
 ) => {
   const {
     id, score, startTime, endTime,
@@ -90,14 +98,14 @@ const updateGameUnsafe = async (
   const updatableGame = await models.Games.findByPk(id);
 
   return updatableGame.update({
+    title,
     score,
     endTime,
     startTime,
   });
 };
 
-
 export const games = combineResolvers(isAuthenticated, gamesUnsafe);
 export const gameplay = combineResolvers(isAuthenticated, gameplayUnsafe);
 export const createGame = combineResolvers(isAuthenticated, createGameUnsafe);
-export const updateGame = combineResolvers(isAuthenticated, updateGameUnsafe);
+export const updateGame = combineResolvers(isAuthenticated, isPermitted, updateGameUnsafe);

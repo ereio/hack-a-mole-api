@@ -1,10 +1,10 @@
 import { gql } from 'apollo-server-express';
 
 export default gql`
-    # extend type Query {
-    #   spawn(id: ID): Spawn
-    #   spawns(gameId: ID!): [Spawn]
-    # }
+    extend type Query {
+      spawn(id: ID): Spawn
+      spawns(gameId: ID!): [Spawn]
+    }
 
     extend type Mutation { 
       saveMoleSpawn(spawn: SpawnInput!): Spawn!

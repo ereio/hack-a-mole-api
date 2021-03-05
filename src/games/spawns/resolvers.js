@@ -1,12 +1,7 @@
 import { combineResolvers } from 'graphql-resolvers/lib/combineResolvers';
-
 import { v4 as uuidv4 } from 'uuid';
 
-
-import {
-  isAuthenticated,
-} from '../../auth/resolvers';
-
+import { isAuthenticated } from '../../auth/resolvers';
 
 const saveMoleSpawnUnsafe = async (
   parent,
@@ -37,4 +32,9 @@ const saveMoleSpawnUnsafe = async (
   });
 };
 
-export const saveMoleSpawn = combineResolvers(isAuthenticated, saveMoleSpawnUnsafe);
+// combined resolvers w/ permissions
+const saveMoleSpawn = combineResolvers(isAuthenticated, saveMoleSpawnUnsafe);
+
+export {
+  saveMoleSpawn
+}

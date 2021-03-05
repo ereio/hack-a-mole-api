@@ -1,22 +1,45 @@
 import { combineResolvers } from 'graphql-resolvers';
 import * as EmailValidator from 'email-validator';
 import { isAuthenticated } from '../auth/resolvers';
-/**
- * Search Users (by username)
- */
-export const userUnsafe = async (parent, { authId }, { models }) => {
-  console.log('[userUnsafe]', { authId });
-  if (!authId) {
-    return null;
+
+// Helper auth function to make sure the 
+// user updated is owned by the user making the call
+const isPermitted = async (parent, { id }, { models, user: userAuthed }) => {
+  const user = await models.Users.findByPk(id);
+
+  if (user.id !== userAuthed.id) {
+    throw new ForbiddenError(NOT_AUTHENTICATED_ERROR);
   }
 
-  return models.Users.findOne({ where: { authId } });
+  return skip;
 };
+
+const userUnsafe = async (parent, { id }, { models }) => {
+  if (!id) { return null; }
+
+  return await models.Users.findByPk(id);
+};
+
+const updateUserUnsafe = async (parent, { id, user: { username } }, { models }) => {
+  const user = await models.Users.findByPk(id);
+
+  await user.update({ username })
+
+  return user;
+};
+
+
+const authUserUnsafe = async (parent, { authId }, { models }) => {
+  if (!authId) { return null; }
+
+  return await models.Users.findOne({ where: { authId } });
+};
+
 
 /**
  * Search Users (by username)
  */
-export const searchUsersUnsafe = async (parent, { username }, { models }) => {
+const searchUsersUnsafe = async (parent, { username }, { models }) => {
   try {
     return await models.Users.findAll({ where: { $iLike: username }, raw: true });
   } catch (error) {
@@ -27,7 +50,7 @@ export const searchUsersUnsafe = async (parent, { username }, { models }) => {
 /**
  * Check Available Email
  */
-export const checkAvailableEmail = async (parent, { email }, { models }) => {
+const checkAvailableEmail = async (parent, { email }, { models }) => {
   try {
     if (!EmailValidator.validate(email)) {
       throw Error('Not a valid email address');
@@ -44,7 +67,7 @@ export const checkAvailableEmail = async (parent, { email }, { models }) => {
 /**
  * Check Available Username
  */
-export const checkAvailableUsername = async (parent, { username }, { models }) => {
+const checkAvailableUsername = async (parent, { username }, { models }) => {
   try {
     if (!username || username.length < 6) {
       throw Error('Not a valid username, must be at least 6 characters');
@@ -58,18 +81,15 @@ export const checkAvailableUsername = async (parent, { username }, { models }) =
   }
 };
 
-/**
- * Update Games Unsafe
- */
-export const updateUserGamesUnsafe = async (parent, { username }, { models }) => {
-  try {
-    return true;
-  } catch (error) {
-    console.log('[updateGamesUnsafe]', error);
-    return false;
-  }
-};
+const user = combineResolvers(isAuthenticated, userUnsafe);
+const searchUsers = combineResolvers(isAuthenticated, searchUsersUnsafe);
+const updateUser = combineResolvers(isAuthenticated, isPermitted, updateUserUnsafe);
 
-export const updateUserGames = updateUserGamesUnsafe;
-export const user = combineResolvers(isAuthenticated, userUnsafe);
-export const searchUsers = combineResolvers(isAuthenticated, searchUsersUnsafe);
+export {
+  authUserUnsafe,
+  user,
+  searchUsers,
+  updateUser,
+  checkAvailableUsername,
+  checkAvailableEmail,
+}

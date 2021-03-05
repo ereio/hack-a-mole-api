@@ -35,11 +35,11 @@ const config = {
     idle: Number(DB_TIMEOUT),
     acquire: Number(90000),
   },
-  dialectOptions: {
-    ssl: {
-      rejectUnauthorized: ssl,
-    },
-  },
+  // dialectOptions: {
+  //   ssl: {
+  //     rejectUnauthorized: false,
+  //   },
+  // },
 };
 
 const sequelize = new Sequelize(config.database,

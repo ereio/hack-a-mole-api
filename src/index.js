@@ -51,6 +51,8 @@ sequelize.sync().then(async () => {
       await sequelize.authenticate();
 
       // eslint-disable-next-line
+      console.log(`🚀 Health check ready at http://localhost:${port}/health`);
+      // eslint-disable-next-line
       console.log(`🚀 Server ready at http://localhost:${port}${apollo.graphqlPath}`);
       // eslint-disable-next-line
       console.log(`🚀 Subscriptions ready at ws://localhost:${port}${apollo.subscriptionsPath}`);

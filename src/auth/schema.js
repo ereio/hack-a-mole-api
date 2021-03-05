@@ -23,7 +23,6 @@ export default gql`
     }
 
     type Auth {
-      id: ID!
       token: ID!
     } 
 `;

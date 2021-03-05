@@ -1,4 +1,3 @@
-
 export const exampleMiddleware = (models) => async (req, res) => {
-  res.sendStatus(200);
+  res.status(200).json({ status: 'ok' });
 };
