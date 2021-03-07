@@ -22,6 +22,8 @@ const database = databaseUrl.path.slice(1);
 const username = databaseUrl.auth.substr(0, databaseUrl.auth.indexOf(':'));
 const password = databaseUrl.auth.substr(databaseUrl.auth.indexOf(':') + 1, databaseUrl.auth.length);
 
+console.log('[sequelize]', DB_SSL, ssl);
+
 const config = {
   host,
   dialect: 'postgres',
@@ -35,12 +37,16 @@ const config = {
     idle: Number(DB_TIMEOUT),
     acquire: Number(90000),
   },
-  // dialectOptions: {
-  //   ssl: {
-  //     rejectUnauthorized: false,
-  //   },
-  // },
 };
+
+if (ssl) {
+  config.ssl = ssl
+  config.dialectOptions = {
+    ssl: {
+      rejectUnauthorized: ssl,
+    },
+  }
+}
 
 const sequelize = new Sequelize(config.database,
   config.username,

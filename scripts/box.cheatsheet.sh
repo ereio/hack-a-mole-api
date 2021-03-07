@@ -39,3 +39,6 @@ groupadd docker
 # 5) Add docker compose
 sudo curl -L "https://github.com/docker/compose/releases/download/1.28.5/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
 sudo chmod +x /usr/local/bin/docker-compose
+
+# Bonus) Clear garbage in remote container repo
+doctl registry garbage-collection start --include-untagged-manifests 

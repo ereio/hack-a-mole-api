@@ -6,15 +6,22 @@ import cookieParser from 'cookie-parser';
 
 import { initMiddleware } from './router';
 import { sequelize, models } from './libs/sequelize';
+import { umzug } from './libs/umzug';
 import { initApolloServer } from './libs/apollo';
 
 console.log('[main] starting');
+
+// Pre initialization - database migrations
+umzug.execute({
+  migrations: [],
+  method: 'up'
+})
 
 // Config
 const port = process.env.PORT || 4000;
 
 const corsOptions = (request, callback) => {
-  const { headers: { origin } } = request;
+  const { headers: { origin = "" } } = request;
   const allowed = process.env.CORS_URL || 'localhost';
 
   const options = {
