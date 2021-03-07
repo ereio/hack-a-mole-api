@@ -1,8 +1,8 @@
 import http from 'http';
 import express from 'express';
-import bodyParser from 'body-parser';
 import cors from 'cors';
 import helmet from 'helmet';
+import cookieParser from 'cookie-parser';
 
 import { initMiddleware } from './router';
 import { sequelize, models } from './libs/sequelize';
@@ -13,11 +13,34 @@ console.log('[main] starting');
 // Config
 const port = process.env.PORT || 4000;
 
+const corsOptions = (request, callback) => {
+  let options;
+  const { headers: { origin } } = request;
+  const allowed = process.env.CORS_URL || 'localhost';
+
+  if (origin.includes(allowed)) {
+    options = {
+      origin: origin,
+      credentials: true,
+      optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
+    }
+  } else {
+    options = {
+      origin: allowed,
+      credentials: true,
+      optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
+    }
+  }
+
+  callback(null, options);
+}
+
 // create express app instance
 const app = express();
-app.use(bodyParser.json({ limit: '3mb' }));
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(cors());
+app.use(express.json({ limit: '3mb' }));
+app.use(express.urlencoded({ extended: false }));
+app.use(cors(corsOptions));
+app.use(cookieParser())
 app.use(helmet());
 
 console.log('[main] express initialized');
@@ -33,7 +56,7 @@ const apollo = initApolloServer(models);
 console.log('[main] apollo initialized');
 
 // attach apollo server to express
-apollo.applyMiddleware({ app, path: '/graphql' });
+apollo.applyMiddleware({ app, path: '/graphql', cors: corsOptions });
 
 // attach app to port
 const server = http.createServer(app);

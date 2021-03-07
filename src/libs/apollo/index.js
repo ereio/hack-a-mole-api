@@ -36,20 +36,26 @@ const initApolloServer = (models) => new ApolloServer({
     onConnect: async (params, socket) => {
       // eslint-disable-next-line no-param-reassign
       socket.isAlive = true;
-
+      let id;
       let token;
+
       if (!params) {
-        const { headers } = socket.upgradeReq;
-        const protocols = headers['sec-websocket-protocol'];
-        const [, , socketToken] = protocols.split(', ');
+        const id = req.cookies['x-id'];
+        const socketToken = req.cookies['x-token'];
+
+        // const { headers } = socket.upgradeReq;
+        // const protocols = headers['sec-websocket-protocol'];
+        // const [, , socketToken] = protocols.split(', ');
         token = socketToken;
       } else {
-        token = params['x-token'];
+        id = req.cookies['x-id'];
+        token = req.cookies['x-token'];
       }
 
-      const auth = await checkAuthenticated(null, { token }, { models });
-      const user = await authUserUnsafe(null, { authId: auth.id }, { models })
+      const auth = await checkAuthenticated(null, { token, id }, { models });
+      const user = await authUserUnsafe(null, { authId: id }, { models })
       return {
+        ...context,
         auth,
         user,
         models,
@@ -60,12 +66,16 @@ const initApolloServer = (models) => new ApolloServer({
       return true;
     },
   },
-  context: async ({ req, connection }) => {
+  context: async (context) => {
+    const { req, connection } = context;
+
     if (req) {
-      const token = req.headers['x-token'];
-      const auth = await checkAuthenticated(null, { token }, { models });
-      const user = await authUserUnsafe(null, { authId: auth.id }, { models })
+      const id = req.cookies['x-id'];
+      const token = req.cookies['x-token'];
+      const auth = await checkAuthenticated(null, { token, id }, { models });
+      const user = await authUserUnsafe(null, { authId: id }, { models })
       return {
+        ...context,
         auth,
         user,
         models,

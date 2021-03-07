@@ -21,10 +21,10 @@ services:
       - POSTGRES_PASSWORD=Testing1234!
       - POSTGRES_DB=testdb
     volumes:
-      - database-data:/var/lib/postgresql/data
+      - mole-postgres:/var/lib/postgresql/data
     ports:
       - "5432:5432"
 
 volumes:
-  database-data:
-    name: database-data
+  mole-postgres:
+    name: mole-postgres

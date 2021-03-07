@@ -1,6 +1,7 @@
 
 import {
   user,
+  currentUser,
   searchUsers,
   checkAvailableEmail,
   checkAvailableUsername,
@@ -9,6 +10,8 @@ import {
 import {
   loginUser,
   signupUser,
+  signOut,
+  signOutAll,
 } from '../../auth/resolvers';
 
 import {
@@ -34,10 +37,13 @@ export default {
     games,
     gameplay,
     searchUsers,
+    currentUser,
     checkAvailableEmail,
     checkAvailableUsername,
   },
   Mutation: {
+    signOut,
+    signOutAll,
     loginUser,
     signupUser,
     createGame,

@@ -20,6 +20,16 @@ const userUnsafe = async (parent, { id }, { models }) => {
   return await models.Users.findByPk(id);
 };
 
+const currentUserUnsafe = async (parent, args, { models, req, user }) => {
+  const { cookies } = req;
+  const authId = cookies['x-id'];
+
+  if (!authId && !user.id) return null;
+
+  // attempt using the found user object in context if available
+  return user || await models.Users.findOne({ where: { authId } });
+};
+
 const updateUserUnsafe = async (parent, { id, user: { username } }, { models }) => {
   const user = await models.Users.findByPk(id);
 
@@ -82,12 +92,14 @@ const checkAvailableUsername = async (parent, { username }, { models }) => {
 };
 
 const user = combineResolvers(isAuthenticated, userUnsafe);
+const currentUser = combineResolvers(isAuthenticated, currentUserUnsafe);
 const searchUsers = combineResolvers(isAuthenticated, searchUsersUnsafe);
 const updateUser = combineResolvers(isAuthenticated, isPermitted, updateUserUnsafe);
 
 export {
   authUserUnsafe,
   user,
+  currentUser,
   searchUsers,
   updateUser,
   checkAvailableUsername,

@@ -71,7 +71,7 @@ const createGameUnsafe = async (
     title, score, startTime, endTime,
   } = game;
 
-  console.log('[createGameUnsafe]', auth.id, score, startTime, endTime, models);
+  console.log('[createGameUnsafe]', game);
 
   const newGame = await models.Games.create({
     id: uuidv4(),

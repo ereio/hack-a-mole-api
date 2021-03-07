@@ -11,7 +11,7 @@ const auths = (sequelize, DataTypes) => {
         allowNull: false,
         field: 'email',
       },
-      salt: {
+      salt: { // TODO: change to sign out of all "sessions"
         type: DataTypes.TEXT,
         allowNull: false,
         field: 'salt',
@@ -21,20 +21,11 @@ const auths = (sequelize, DataTypes) => {
         allowNull: false,
         field: 'hash',
       },
-      token: {
-        type: DataTypes.TEXT,
-        allowNull: true,
-        field: 'token',
-      },
-      refreshes: {
+      refreshTokens: {
         type: DataTypes.ARRAY(DataTypes.TEXT),
-        allowNull: true,
-        field: 'token',
-      },
-      invalidated: {
-        type: DataTypes.ARRAY(DataTypes.TEXT),
-        allowNull: true,
-        field: 'token',
+        allowNull: false,
+        defaultValue: [],
+        field: 'refresh_tokens',
       },
       createdAt: {
         type: DataTypes.DATE,
