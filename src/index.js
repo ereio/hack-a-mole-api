@@ -14,22 +14,13 @@ console.log('[main] starting');
 const port = process.env.PORT || 4000;
 
 const corsOptions = (request, callback) => {
-  let options;
   const { headers: { origin } } = request;
   const allowed = process.env.CORS_URL || 'localhost';
 
-  if (origin.includes(allowed)) {
-    options = {
-      origin: origin,
-      credentials: true,
-      optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
-    }
-  } else {
-    options = {
-      origin: allowed,
-      credentials: true,
-      optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
-    }
+  const options = {
+    origin: origin.includes(allowed) ? origin : allowed,
+    credentials: true,
+    optionsSuccessStatus: 200// some legacy browsers (IE11, various SmartTVs) choke on 204
   }
 
   callback(null, options);
