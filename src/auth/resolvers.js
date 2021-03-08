@@ -11,7 +11,7 @@ const { MOLE_SECRET } = process.env;
 const checkAuthenticated = async (parent, { token, id }, { models }) => {
   console.log('[checkAuthenticated]', token)
   if (!token || token === 'undefined' || token === 'null') {
-    throw new ForbiddenError(NOT_AUTHENTICATED_ERROR);
+    return false;
   }
 
   try {

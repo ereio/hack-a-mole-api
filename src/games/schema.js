@@ -10,7 +10,7 @@ export default gql`
 
     extend type Mutation {
       createGame(game: GameInput!): Game!
-      updateGame(id: ID!, game: GameInput!): Game! 
+      updateGame(game: GameInput!): Game! 
     }
     
     type Game {
@@ -22,8 +22,9 @@ export default gql`
     }  
 
     input GameInput {
-      title: String
+      id: ID
       score: Int!
+      title: String
       endTime: DateTime!
       startTime: DateTime!
     }

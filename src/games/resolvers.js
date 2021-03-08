@@ -18,10 +18,10 @@ export const __resolveTypeEvent = (event) => {
 
 // Helper auth function to make sure the 
 // game updated is owned by the user making the call
-const isPermitted = async (parent, { id }, { models, user }) => {
-  const game = await models.Games.findByPk(id);
+const isPermitted = async (parent, { game: gameInput }, { models, user }) => {
+  const game = await models.Games.findByPk(gameInput.id);
 
-  if (game.userId !== user.id) {
+  if (!game || game.userId !== user.id) {
     throw new ForbiddenError(NOT_AUTHENTICATED_ERROR);
   }
 
@@ -88,21 +88,23 @@ const createGameUnsafe = async (
 const updateGameUnsafe = async (
   parent,
   { game },
-  { models, user },
+  { models },
 ) => {
   const {
-    id, score, startTime, endTime,
+    id, title, score, startTime, endTime,
   } = game;
 
-  console.log('[updateGameUnsafe]', score, startTime, endTime, models);
+  console.log('[updateGameUnsafe]', id, score, startTime, endTime);
   const updatableGame = await models.Games.findByPk(id);
 
-  return updatableGame.update({
+  await updatableGame.update({
     title,
     score,
     endTime,
     startTime,
   });
+
+  return updatableGame;
 };
 
 export const games = combineResolvers(isAuthenticated, gamesUnsafe);

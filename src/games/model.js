@@ -17,8 +17,7 @@ const games = (sequelize, DataTypes) => {
         field: 'title',
       },
       score: {
-        type: DataTypes.TEXT,
-        primaryKey: true,
+        type: DataTypes.INTEGER,
         allowNull: false,
         field: 'score',
       },
