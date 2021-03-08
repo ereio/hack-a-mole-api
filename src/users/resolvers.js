@@ -60,7 +60,7 @@ const searchUsersUnsafe = async (parent, { username }, { models }) => {
 /**
  * Check Available Email
  */
-const checkAvailableEmail = async (parent, { email }, { models }) => {
+const checkAvailableEmail = async (parent, { email: { text: email } }, { models }) => {
   try {
     if (!EmailValidator.validate(email)) {
       throw Error('Not a valid email address');
@@ -77,7 +77,7 @@ const checkAvailableEmail = async (parent, { email }, { models }) => {
 /**
  * Check Available Username
  */
-const checkAvailableUsername = async (parent, { username }, { models }) => {
+const checkAvailableUsername = async (parent, { username: { text: username } }, { models }) => {
   try {
     if (!username || username.length < 6) {
       throw Error('Not a valid username, must be at least 6 characters');

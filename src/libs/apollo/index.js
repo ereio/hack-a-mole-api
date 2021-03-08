@@ -16,12 +16,20 @@ const typeDefs = [
   ...schemas
 ];
 
-const schemaExecutable = makeExecutableSchema({ typeDefs, resolvers });
+const schemaExecutable = makeExecutableSchema({
+  typeDefs,
+  resolvers,
+  schemaTransforms: [constraintDirective()],
+  schemaDirectives: {
+    rateLimit: createRateLimitDirective(),
+  },
+});
+
 const schemaWithMiddleware = applyMiddleware(schemaExecutable, loggingMiddleware)
 
 const initApolloServer = (models) => new ApolloServer({
-  resolvers,
   typeDefs,
+  resolvers,
   schema: schemaWithMiddleware,
   schemaTransforms: [constraintDirective()],
   schemaDirectives: {

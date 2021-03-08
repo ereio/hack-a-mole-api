@@ -13,6 +13,7 @@ const {
   DB_POOL_SIZE = 1,
   DB_TIMEOUT = 100,
   DB_SSL = 'true',
+  NODE_ENV = 'development'
 } = process.env;
 
 const databaseUrl = url.parse(DB_URL);
@@ -41,6 +42,7 @@ const config = {
 
 if (ssl) {
   config.ssl = ssl
+} else if (NODE_ENV === 'production') {
   config.dialectOptions = {
     ssl: {
       rejectUnauthorized: ssl,

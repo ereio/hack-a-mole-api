@@ -106,7 +106,6 @@ const loginUserUnsafe = async (
 ) => {
   const auth = await models.Auths.findOne({ where: { email } });
 
-
   if (!auth) {
     throw Error('Failed to login. Bad email or password provided');
   }
