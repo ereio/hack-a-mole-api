@@ -19,7 +19,7 @@
     "init-eslint": "eslint --init"
   },
   "dependencies": {
-    "apollo-server": "^3.3.0",
+    "apollo-server": "^3.4.1",
     "apollo-server-express": "^3.3.0",
     "bcrypt": "^5.0.0",
     "bcryptjs": "^2.4.3",
