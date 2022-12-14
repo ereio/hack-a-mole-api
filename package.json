@@ -29,7 +29,7 @@
     "dotenv": "^10.0.0",
     "email-validator": "^2.0.4",
     "esm": "^3.2.25",
-    "express": "^4.17.1",
+    "express": "^4.17.3",
     "graphql": "^15.0.0",
     "graphql-constraint-directive": "^2.1.1",
     "graphql-iso-date": "^3.6.1",
